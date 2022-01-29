@@ -47,20 +47,8 @@ public class Canvas {
         if (p.x < 0 || p.x >= rows) throw new PointOutsideCanvasException();
         if (p.y < 0 || p.y >= cols) throw new PointOutsideCanvasException();
         //Ok we in range -> set colour on canvas and add it to the known colour list
-        this.canvas_data[(int) p.x][(int) p.y] = p.colour;
+        this.canvas_data[(int) Math.round(p.x)][(int) Math.round(p.y)] = p.colour;
         if (!this.colours.contains(p.colour)) this.colours.add(p.colour);
     }
 
-    public byte[] get_canvas_data_1d() {
-        byte[] res = new byte[this.cols*this.rows];
-
-        for (int i = 0; i < this.rows; ++i) {
-            for (int j = 0; j < this.cols; ++j) {
-                int k = i*this.cols + j;
-                res[k] = this.canvas_data[i][j];
-            }
-        }
-
-        return res;
-    }
 }

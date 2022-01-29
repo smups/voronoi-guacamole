@@ -7,8 +7,8 @@ import com.smups.Point;
 
 public class RangedVoronoiDrawing {
 
-    //Rangefunction that will be used to calculate the ranged voronoi drawing
-    private final RangeFunction rf;
+    //Metric that will be used to calculate the ranged voronoi drawing
+    private final Metric g; //refrence to general relativity?
     
     //Points from which ranged voronoi diagram should be drawn
     private final List<Point> vecs;
@@ -19,9 +19,9 @@ public class RangedVoronoiDrawing {
     //Canvas on which to draw
     private Canvas cv;
 
-    public RangedVoronoiDrawing(RangeFunction rf, List<Point> vecs,
+    public RangedVoronoiDrawing(Metric g, List<Point> vecs,
         Canvas canvas, double threshold){
-        this.rf = rf;
+        this.g = g;
         this.vecs = vecs;
         this.cv = canvas;
         this.threshold = threshold;
@@ -40,10 +40,14 @@ public class RangedVoronoiDrawing {
                 for (Point p: this.vecs) {
                     //If a point has a higher score than the highscore,
                     //the point now owns this pixel
-                    score = rf.distance(pos, p);
+                    score = g.distance(pos, p);
                     if (score > highscore) {
-                        cv.set(p);
+                        pos = pos.change_colour(p.colour);
+                        cv.set(pos);
                         highscore = score;
+                        /*System.out.printf("Added px(%d,%d) to point %s",
+                            x, z, p.toString()
+                        );*/
                     }
                 }
             }
