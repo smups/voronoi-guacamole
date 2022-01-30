@@ -1,15 +1,9 @@
 package com.smups;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-
 import java.io.File;
-
-import java.awt.image.BufferedImage;
-
-import javax.imageio.ImageIO;
 
 import com.smups.drawings.Metric;
 import com.smups.drawings.RangedVoronoiDrawing;
@@ -40,7 +34,7 @@ public class AppTest
     @Test
     @Order(1)
     public void draw_voronoi_diagram() throws Exception{
-        // (A) Make a random drawing (and save it for test #2)
+        //Make a random drawing (and save it for test #2)
 
         // (1) Create a randomly sized canvas
         Random rnd = new Random();
@@ -79,41 +73,11 @@ public class AppTest
         Canvas result = new RangedVoronoiDrawing(metric, vecs, cv, 0.00001).draw();
         this.drawing = new ImmutableCanvas(result);
 
-        // (B) Turn the canvas into an actual image
-        BufferedImage img = new BufferedImage(
-            result.rows,
-            result.cols,
-            BufferedImage.TYPE_INT_RGB
-        );
-
-        // (2) Map the byte colours into random actual colours
-        HashMap<Byte, Integer> color_hashmap = new HashMap<Byte, Integer>();
-        color_hashmap.put((byte) 0, (256 << 16) | (256 << 8) | 256); //black background
-
-        for (byte colour : result.get_colours()){
-            int r = (int)(Math.random()*256);
-            int g = (int)(Math.random()*256);
-            int b = (int)(Math.random()*256);
-            int p = (r << 16) | (g << 8) | b;
-
-            if (!color_hashmap.containsKey(colour)) color_hashmap.put(colour, p);
-        }
-
-        // (3) Fill the image
-        for (int y = 0; y < result.cols; y++) {
-            for (int x = 0; x < result.rows; x++) {
-                img.setRGB(x, y, color_hashmap.get(
-                    Byte.valueOf(result.get_canvas_data()[x][y]))
-                );
-            }
-        }
-
-        // (4) save the image
+        // (5) save the image
         try {
             File f = new File(tmp_dir + "/image_test.png");
-            System.out.printf("Output file at: %s\n", f.getPath());
             if (!f.exists()) f.createNewFile();
-            ImageIO.write(img, "png", f);
+            result.save_as_png(f);
         } catch (Exception e) {
             e.printStackTrace();
         }

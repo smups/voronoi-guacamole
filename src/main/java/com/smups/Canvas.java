@@ -1,6 +1,10 @@
 package com.smups;
 
+import java.io.File;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.smups.exceptions.CanvasSizeMisMatchException;
@@ -56,6 +60,42 @@ public class Canvas {
         //Ok we in range -> set colour on canvas and add it to the known colour list
         this.canvas_data[(int) Math.round(p.x)][(int) Math.round(p.y)] = p.colour;
         if (!this.colours.contains(p.colour)) this.colours.add(p.colour);
+    }
+
+    public void save_as_png(File f) throws Exception{
+
+        // (1) Make a new image
+        BufferedImage img = new BufferedImage(
+            this.rows,
+            this.cols,
+            BufferedImage.TYPE_INT_RGB
+        );
+
+        // (2) Map the byte colours into random actual colours
+        HashMap<Byte, Integer> color_hashmap = new HashMap<Byte, Integer>();
+        color_hashmap.put((byte) 0, (256 << 16) | (256 << 8) | 256); //black background
+
+        for (byte colour : this.colours){
+            int r = (int)(Math.random()*256);
+            int g = (int)(Math.random()*256);
+            int b = (int)(Math.random()*256);
+            int p = (r << 16) | (g << 8) | b;
+
+            if (!color_hashmap.containsKey(colour)) color_hashmap.put(colour, p);
+        }
+
+        // (3) Fill the image
+        for (int y = 0; y < this.cols; y++) {
+            for (int x = 0; x < this.rows; x++) {
+                img.setRGB(x, y, color_hashmap.get(
+                    Byte.valueOf(this.canvas_data[x][y]))
+                );
+            }
+        }
+
+        // (4) Write the image to the file
+        System.out.printf("Output file at: %s\n", f.getPath());
+        ImageIO.write(img, "png", f);
     }
 
 }
