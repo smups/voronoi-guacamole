@@ -1,8 +1,0 @@
-com/smups/Canvas.class
-com/smups/drawings/RangedVoronoiDrawing.class
-com/smups/drawings/Metric.class
-com/smups/ImmutableCanvas.class
-com/smups/drawings/BorderDrawing.class
-com/smups/exceptions/CanvasSizeMisMatchException.class
-com/smups/exceptions/PointOutsideCanvasException.class
-com/smups/Point.class
