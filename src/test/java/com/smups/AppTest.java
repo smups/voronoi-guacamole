@@ -1,7 +1,6 @@
 package com.smups;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -15,26 +14,33 @@ import javax.imageio.ImageIO;
 import com.smups.drawings.Metric;
 import com.smups.drawings.RangedVoronoiDrawing;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 
-/**
- * Unit test for simple App.
- */
+@TestMethodOrder(OrderAnnotation.class)
 public class AppTest 
 {
     //System temp dir
     private static String tmp_dir = System.getProperty("java.io.tmpdir");
 
+    //Shared drawing
+    private ImmutableCanvas drawing;
+
     /**
      * This test creates a canvas of a random size and then fills the canvas
-     * with a voronoi drawing drawn from at most 24 random points. 
+     * with a voronoi drawing drawn from at most 24 random points. The resulting
+     * canvas is saved a in a class field and also turned into a png image.
      * 
-     * The resulting image is saved in the OS's tmp folder.
+     * This png image is saved in the OS's tmp folder.
      * 
      * @throws Exception
      */
     @Test
-    public void fill_test_buffer() throws Exception{
+    @Order(1)
+    public void draw_voronoi_diagram() throws Exception{
+        // (A) Make a random drawing (and save it for test #2)
 
         // (1) Create a randomly sized canvas
         Random rnd = new Random();
@@ -69,25 +75,19 @@ public class AppTest
             }
         };
 
-        // (4) Draw on the canvas
+        // (4) Draw on the canvas and save an immutable copy
         Canvas result = new RangedVoronoiDrawing(metric, vecs, cv, 0.00001).draw();
+        this.drawing = new ImmutableCanvas(result);
 
-        /*
-        for (byte[] r : result.get_canvas_data()) {
-            System.out.println(Arrays.toString(r));
-        }
-        */
-
-        // (5) Turn the canvas into an actual image
+        // (B) Turn the canvas into an actual image
         BufferedImage img = new BufferedImage(
             result.rows,
             result.cols,
             BufferedImage.TYPE_INT_RGB
         );
 
-        //Map the byte colours into random actual colours
+        // (2) Map the byte colours into random actual colours
         HashMap<Byte, Integer> color_hashmap = new HashMap<Byte, Integer>();
-
         color_hashmap.put((byte) 0, (256 << 16) | (256 << 8) | 256); //black background
 
         for (byte colour : result.get_colours()){
@@ -99,7 +99,7 @@ public class AppTest
             if (!color_hashmap.containsKey(colour)) color_hashmap.put(colour, p);
         }
 
-        //Fill the image
+        // (3) Fill the image
         for (int y = 0; y < result.cols; y++) {
             for (int x = 0; x < result.rows; x++) {
                 img.setRGB(x, y, color_hashmap.get(
@@ -108,7 +108,7 @@ public class AppTest
             }
         }
 
-        //aaand write the image
+        // (4) save the image
         try {
             File f = new File(tmp_dir + "/image_test.png");
             System.out.printf("Output file at: %s\n", f.getPath());
@@ -119,4 +119,11 @@ public class AppTest
         }
     }
 
+    @Test
+    @Order(2)
+    public void draw_borders() throws Exception {
+        // (1) Make a copy of the result from test #1 (may thrown nullptr ex)
+        Canvas cv = new Canvas(this.drawing);
+
+    }
 }

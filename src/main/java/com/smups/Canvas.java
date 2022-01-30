@@ -20,6 +20,13 @@ public class Canvas {
         this.cols = cols;
     }
 
+    public Canvas(ImmutableCanvas cv) {
+        this.rows = cv.rows;
+        this.cols = cv.cols;
+        this.canvas_data = cv.copy_canvas_data();
+        this.colours = cv.copy_colours();
+    }
+
     public static Canvas new_empty_canvas(int rows, int cols) {
         Canvas cv = new Canvas(rows, cols);
         try {cv.set_canvas_data(new byte[rows][cols]);}
