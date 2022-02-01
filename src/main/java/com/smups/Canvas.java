@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,8 +46,18 @@ public class Canvas implements Serializable{
     public boolean equals(Object o) {
         if (!(o instanceof Canvas)) return false;
         Canvas that = (Canvas) o;
-        return this.canvas_data.equals(that.canvas_data) &&
-            this.colours.equals(that.colours);
+        return (this.rows == that.rows) && (this.cols == that.cols) &&
+            this.colours.equals(that.colours) &&
+            Arrays.deepEquals(this.get_canvas_data(), that.get_canvas_data());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("cv:(%dx%d) with %d colours",
+            this.rows,
+            this.cols,
+            this.colours.size()
+        );
     }
 
     public byte[][] get_canvas_data() { return this.canvas_data; }

@@ -24,7 +24,7 @@ public class AppTest
     private static String tmp_dir = System.getProperty("java.io.tmpdir");
 
     //Shared drawing
-    private ImmutableCanvas drawing;
+    private static ImmutableCanvas drawing;
 
     /**
      * This test creates a canvas of a random size and then fills the canvas
@@ -74,7 +74,7 @@ public class AppTest
         };
 
         // (4) Draw on the canvas and save an immutable copy
-        Canvas result = new RangedVoronoiDrawing(metric, vecs, cv, 0.00001).draw();
+        Canvas result = new RangedVoronoiDrawing(metric, vecs, cv, rnd.nextDouble()/100.0).draw();
         this.drawing = new ImmutableCanvas(result);
 
         // (5) save the image
@@ -110,6 +110,8 @@ public class AppTest
         f_in.close();
 
         // (4) Compare the two
+        System.out.println(cv1.toString());
+        System.out.println(cv2.toString());
         assert(cv1.equals(cv2));
     }
 
