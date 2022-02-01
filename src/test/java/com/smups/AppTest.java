@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import com.smups.drawings.Metric;
 import com.smups.drawings.RangedVoronoiDrawing;
@@ -75,7 +79,7 @@ public class AppTest
 
         // (5) save the image
         try {
-            File f = new File(tmp_dir + "/image_test.png");
+            File f = new File(tmp_dir + "/voronoiG-1.png");
             if (!f.exists()) f.createNewFile();
             result.save_as_png(f);
         } catch (Exception e) {
@@ -85,6 +89,32 @@ public class AppTest
 
     @Test
     @Order(2)
+    public void io() throws Exception {
+        // (1) Make a copy of the result from test #1 (may thrown nullptr ex)
+        Canvas cv1 = new Canvas(this.drawing);
+
+        // (2) Write the copy to some tmp file
+        File f = new File(tmp_dir + "voronoiG-2.sr");
+        FileOutputStream f_out = new FileOutputStream(f);
+        ObjectOutputStream o_out = new ObjectOutputStream(f_out);
+        o_out.writeObject(cv1);
+        o_out.flush();
+        o_out.close();
+        f_out.close();
+
+        // (3) Now read it again
+        FileInputStream f_in = new FileInputStream(f);
+        ObjectInputStream o_in = new ObjectInputStream(f_in);
+        Canvas cv2 = (Canvas) o_in.readObject();
+        o_in.close();
+        f_in.close();
+
+        // (4) Compare the two
+        assert(cv1.equals(cv2));
+    }
+
+    @Test
+    @Order(3)
     public void draw_borders() throws Exception {
         // (1) Make a copy of the result from test #1 (may thrown nullptr ex)
         Canvas cv = new Canvas(this.drawing);

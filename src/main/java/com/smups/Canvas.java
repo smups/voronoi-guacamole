@@ -1,6 +1,7 @@
 package com.smups;
 
 import java.io.File;
+import java.io.Serializable;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.util.ArrayList;
@@ -10,7 +11,8 @@ import java.util.List;
 import com.smups.exceptions.CanvasSizeMisMatchException;
 import com.smups.exceptions.PointOutsideCanvasException;
 
-public class Canvas {
+public class Canvas implements Serializable{
+    static final long serialVersionUID = 1L;
     
     public final int rows;
     public final int cols;
@@ -37,6 +39,14 @@ public class Canvas {
         catch (Exception e) {} //This can litterally never throw an error
         cv.colours.add((byte) 0); //Add nothing as a byte
         return cv;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Canvas)) return false;
+        Canvas that = (Canvas) o;
+        return this.canvas_data.equals(that.canvas_data) &&
+            this.colours.equals(that.colours);
     }
 
     public byte[][] get_canvas_data() { return this.canvas_data; }
