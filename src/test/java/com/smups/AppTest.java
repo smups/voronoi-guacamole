@@ -26,6 +26,8 @@ public class AppTest
     //Shared drawing
     private static ImmutableCanvas drawing;
 
+    @Test
+    @Order(1)
     /**
      * This test creates a canvas of a random size and then fills the canvas
      * with a voronoi drawing drawn from at most 24 random points. The resulting
@@ -34,9 +36,7 @@ public class AppTest
      * This png image is saved in the OS's tmp folder.
      * 
      * @throws Exception
-     */
-    @Test
-    @Order(1)
+     */    
     public void draw_voronoi_diagram() throws Exception{
         //Make a random drawing (and save it for test #2)
 
@@ -89,6 +89,13 @@ public class AppTest
 
     @Test
     @Order(2)
+    /**
+     * This test writes a Canvas to a file and reads it back into memory. The
+     * test will pass if original canvas equals the canvas that went through
+     * a read-write cycle.
+     * 
+     * @throws Exception
+     */
     public void io() throws Exception {
         // (1) Make a copy of the result from test #1 (may thrown nullptr ex)
         Canvas cv1 = new Canvas(this.drawing);
@@ -117,6 +124,11 @@ public class AppTest
 
     @Test
     @Order(3)
+    /**
+     * This test blah blah 
+     * 
+     * @throws Exception
+     */
     public void draw_borders() throws Exception {
         // (1) Make a copy of the result from test #1 (may thrown nullptr ex)
         Canvas cv = new Canvas(this.drawing);
