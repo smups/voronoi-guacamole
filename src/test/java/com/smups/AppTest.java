@@ -1,14 +1,17 @@
 package com.smups;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import com.smups.drawings.BorderDrawing;
 import com.smups.drawings.Metric;
 import com.smups.drawings.RangedVoronoiDrawing;
 
@@ -42,7 +45,7 @@ public class AppTest
 
         // (1) Create a randomly sized canvas
         Random rnd = new Random();
-        int smallest = 1024;//1024;
+        int smallest = 1024;
         int biggest = 4*smallest;
 
         Canvas cv = Canvas.new_empty_canvas(
@@ -59,7 +62,7 @@ public class AppTest
             Point p = new Point(
                 cv.rows * rnd.nextDouble(), //x
                 cv.cols * rnd.nextDouble(), //y
-                (byte) (rnd.nextInt(255) - 127) //colour
+                (byte) j //colour
             );
             vecs.add(p);
         }
@@ -67,7 +70,7 @@ public class AppTest
         // (3) Drawing requires defining a rangefunction. We use a simple square
         Metric metric = new Metric() {
             @Override
-            public double distance(Point p1, Point p2) {
+            public double distance(Tuple p1, Tuple p2) {
                 double r2 = (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y);
                 return 1/r2;
             }
@@ -78,13 +81,9 @@ public class AppTest
         this.drawing = new ImmutableCanvas(result);
 
         // (5) save the image
-        try {
-            File f = new File(tmp_dir + "/voronoiG-1.png");
-            if (!f.exists()) f.createNewFile();
-            result.save_as_png(f);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        File f = new File(tmp_dir + "/voronoiG-1.png");
+        if (!f.exists()) f.createNewFile();
+        result.save_as_png(f);
     }
 
     @Test
@@ -131,7 +130,37 @@ public class AppTest
      */
     public void draw_borders() throws Exception {
         // (1) Make a copy of the result from test #1 (may thrown nullptr ex)
-        Canvas cv = new Canvas(this.drawing);
+        Canvas source = new Canvas(this.drawing);
+        Canvas target = Canvas.new_empty_canvas(source.rows, source.cols);
+        target.set_colours(source.get_colours()); //same colours
 
+        // (2) Loop through the all points in the canvas starting in the top right
+        HashSet<Byte> known_cols = new HashSet<Byte>();
+        known_cols.add(Canvas.BLANK);
+
+        int colours_handled = 0;
+        
+        for (int x = 0; x < source.rows; x++) {
+            for (int y = 0; y < source.cols; y++) {
+                if (!known_cols.contains(source.get_canvas_data()[x][y])) {
+                    byte colour = source.get_canvas_data()[x][y];
+                    colours_handled++;
+
+                    System.out.printf("Working on colour 0x%x (%d/%d)%n",
+                        colour,
+                        colours_handled,
+                        source.get_colours().size() - 1
+                    );
+
+                    known_cols.add(colour);
+                    new BorderDrawing().draw(source, target, new Point(x, y, colour));
+                }
+            }
+        }
+
+        // (3) Save the img
+        File f = new File(tmp_dir + "/voronoiG-3.png");
+        if (!f.exists()) f.createNewFile();
+        target.save_as_png(f);
     }
 }

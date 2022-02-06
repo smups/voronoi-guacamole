@@ -5,7 +5,10 @@ import java.util.List;
 import com.smups.Canvas;
 import com.smups.Point;
 
-public class RangedVoronoiDrawing extends Drawing{
+public class RangedVoronoiDrawing {
+
+    //Canvas on which to draw
+    private Canvas cv;
 
     //Metric that will be used to calculate the ranged voronoi drawing
     private final Metric g; //refrence to general relativity?
@@ -18,13 +21,12 @@ public class RangedVoronoiDrawing extends Drawing{
 
     public RangedVoronoiDrawing(Metric g, List<Point> vecs,
         Canvas canvas, double threshold){
-        super(canvas);
+        this.cv = canvas;
         this.g = g;
         this.vecs = vecs;
         this.threshold = threshold;
     }
 
-    @Override
     public Canvas draw() throws Exception {
         for (int x = 0; x < cv.rows; ++x) {
             for (int z = 0; z < cv.cols; ++z) {

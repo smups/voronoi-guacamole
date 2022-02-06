@@ -14,6 +14,8 @@ import com.smups.exceptions.PointOutsideCanvasException;
 
 public class Canvas implements Serializable{
     static final long serialVersionUID = 1L;
+
+    public static final byte BLANK = 0;
     
     public final int rows;
     public final int cols;
@@ -38,7 +40,7 @@ public class Canvas implements Serializable{
         Canvas cv = new Canvas(rows, cols);
         try {cv.set_canvas_data(new byte[rows][cols]);}
         catch (Exception e) {} //This can litterally never throw an error
-        cv.colours.add((byte) 0); //Add nothing as a byte
+        cv.colours.add((byte) BLANK); //Add nothing as a byte
         return cv;
     }
 
@@ -74,6 +76,8 @@ public class Canvas implements Serializable{
         }
         this.canvas_data = canvas_data;
     }
+    
+    public void set_colours(List<Byte> cols) {this.colours = cols;}
 
     public void set(Point p) throws PointOutsideCanvasException {
         if (p.x < 0 || p.x >= rows) throw new PointOutsideCanvasException();
@@ -81,6 +85,13 @@ public class Canvas implements Serializable{
         //Ok we in range -> set colour on canvas and add it to the known colour list
         this.canvas_data[(int) Math.round(p.x)][(int) Math.round(p.y)] = p.colour;
         if (!this.colours.contains(p.colour)) this.colours.add(p.colour);
+    }
+
+    public byte get(Tuple p) throws PointOutsideCanvasException {
+        if (p.x < 0 || p.x >= rows) throw new PointOutsideCanvasException();
+        if (p.y < 0 || p.y >= cols) throw new PointOutsideCanvasException();
+        //Ok we in range 
+        return this.canvas_data[(int) Math.round(p.x)][(int) Math.round(p.y)];
     }
 
     public void save_as_png(File f) throws Exception{
@@ -94,7 +105,7 @@ public class Canvas implements Serializable{
 
         // (2) Map the byte colours into random actual colours
         HashMap<Byte, Integer> color_hashmap = new HashMap<Byte, Integer>();
-        color_hashmap.put((byte) 0, (256 << 16) | (256 << 8) | 256); //black background
+        color_hashmap.put((byte) BLANK, (256 << 16) | (256 << 8) | 256); //black background
 
         for (byte colour : this.colours){
             int r = (int)(Math.random()*256);

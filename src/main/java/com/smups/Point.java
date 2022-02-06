@@ -1,14 +1,22 @@
 package com.smups;
 
-public class Point {
-    public final double x;
-    public final double y;
+public class Point extends Tuple {
+
     public final byte colour;
 
     public Point(double x, double y, byte colour) {
-        this.x = x;
-        this.y = y;
+        super(x, y);
         this.colour = colour;
+    }
+    public Point(Tuple t, byte colour) {
+        super(t);
+        this.colour = colour;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Point)) return false;
+        return ((Tuple) this).equals((Tuple) o) && ((Point) o).colour == this.colour;
     }
 
     public Point change_colour(byte new_colour){
@@ -21,6 +29,6 @@ public class Point {
 
     @Override
     public String toString() {
-        return String.format("P{%f, %f} col:#%x%n", this.x, this.y, this.colour);
+        return String.format("P{%f, %f} col:#%x", this.x, this.y, this.colour);
     }
 }
