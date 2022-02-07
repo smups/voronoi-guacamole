@@ -45,9 +45,6 @@ public class RangedVoronoiDrawing {
                         pos = pos.change_colour(p.colour);
                         cv.set(pos);
                         highscore = score;
-                        /*System.out.printf("Added px(%d,%d) to point %s",
-                            x, z, p.toString()
-                        );*/
                     }
                 }
             }
