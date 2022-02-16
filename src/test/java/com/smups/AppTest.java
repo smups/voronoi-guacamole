@@ -77,7 +77,7 @@ public class AppTest
         };
 
         // (4) Draw on the canvas and save an immutable copy
-        Canvas result = new RangedVoronoiDrawing(metric, vecs, cv, rnd.nextDouble()/1000d).draw();
+        Canvas result = new RangedVoronoiDrawing(metric, vecs, cv, rnd.nextDouble()/(cv.rows*cv.cols)).draw();
         this.drawing = new ImmutableCanvas(result);
 
         // (5) save the image
